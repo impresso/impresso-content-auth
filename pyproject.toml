@@ -1,25 +1,29 @@
 [project]
-name = "impresso-content-auth"
-version = "0.1.0"
-description = "Impresso Content Authorization service"
 authors = [
-    {name = "Roman Kalyakin",email = "roman@kalyakin.com"}
+  {name = "Roman Kalyakin", email = "roman@kalyakin.com"},
 ]
+dependencies = [
+  "starlette (>=0.46.2,<0.47.0)",
+  "uvicorn (>=0.34.2,<0.35.0)",
+]
+description = "Impresso Content Authorization service"
+name = "impresso-content-auth"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = [
-    "starlette (>=0.46.2,<0.47.0)",
-    "uvicorn (>=0.34.2,<0.35.0)"
-]
+version = "0.1.0"
 
 [project.scripts]
 impresso-auth = "impresso_content_auth.main:main"
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=2.0.0,<3.0.0"]
 
 [tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+flake8 = "^7.2.0"
 mypy = "^1.15.0"
 pre-commit = "^4.2.0"
 
+[tool.flake8]
+max-line-length = 120
