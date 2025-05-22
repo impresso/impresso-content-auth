@@ -1,0 +1,11 @@
+repos:
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.15.0
+    hooks:
+      - id: mypy
+        name: mypy
+        language: system
+        entry: poetry run mypy
+        types: [python]
+        require_serial: true
+        exclude: ^(docs|tests)/
