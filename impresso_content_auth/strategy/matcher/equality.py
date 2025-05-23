@@ -13,3 +13,6 @@ class EqualityMatcher:
 
     def __call__(self, a: T, b: T) -> bool:
         return a == b
+
+    def __str__(self) -> str:
+        return "EqualityMatcher()"

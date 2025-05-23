@@ -112,3 +112,7 @@ class ManifestWithSecretExtractor(TokenExtractorStrategy[Optional[str]]):
             return str(secret) if secret is not None else None
         except (IOError, json.JSONDecodeError):
             return None
+
+    def __str__(self) -> str:
+        """Return a string representation of the extractor."""
+        return f"ManifestWithSecretExtractor(base_path={self.base_path})"

@@ -37,3 +37,7 @@ class BearerTokenExtractor(TokenExtractorStrategy[Optional[str]]):
             return None
 
         return parts[1]
+
+    def __str__(self) -> str:
+        """Return a string representation of the extractor."""
+        return "BearerTokenExtractor()"

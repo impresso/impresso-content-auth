@@ -1,3 +1,4 @@
+import logging
 import os
 from typing import List
 
@@ -7,11 +8,16 @@ from starlette.routing import Route
 from starlette.requests import Request
 from starlette.status import HTTP_200_OK, HTTP_403_FORBIDDEN
 
+from impresso_content_auth.strategy.extractor.base import TokenExtractorStrategy
 from impresso_content_auth.strategy.extractor.bearer_token import BearerTokenExtractor
 from impresso_content_auth.strategy.extractor.manifest_with_secret import (
     ManifestWithSecretExtractor,
 )
+from impresso_content_auth.strategy.extractor.static_secret import StaticSecretExtractor
 from impresso_content_auth.strategy.matcher.equality import EqualityMatcher
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 async def health(_request: Request) -> JSONResponse:
@@ -24,16 +30,37 @@ async def health(_request: Request) -> JSONResponse:
     return JSONResponse({"status": "ok"})
 
 
-TOKEN_EXTRACTORS = {
+TOKEN_EXTRACTORS: dict[str, TokenExtractorStrategy] = {
     "bearer-token": BearerTokenExtractor(),
-    "manifest-with-secret": ManifestWithSecretExtractor(
-        base_path=os.environ.get("STATIC_FILES_PATH", "/app/static_files")
-    ),
 }
 
 MATCHERS = {
     "equality": EqualityMatcher(),
 }
+
+
+def init() -> None:
+    """Initialize the application and its components."""
+
+    uvicorn_logger = logging.getLogger("uvicorn")
+    for handler in uvicorn_logger.handlers:
+        logger.addHandler(handler)
+
+    static_files_path = os.environ.get("STATIC_FILES_PATH", None)
+    if static_files_path:
+        TOKEN_EXTRACTORS["manifest-with-secret"] = ManifestWithSecretExtractor(
+            base_path=static_files_path
+        )
+
+    static_secret = os.environ.get("STATIC_SECRET", None)
+    if static_secret:
+        TOKEN_EXTRACTORS["static-secret"] = StaticSecretExtractor(secret=static_secret)
+
+    for name, extractor in TOKEN_EXTRACTORS.items():
+        logger.info("Initialized token extractor: %s (%s)", name, extractor)
+
+    for name, matcher in MATCHERS.items():
+        logger.info("Initialized matcher: %s (%s)", name, matcher)
 
 
 async def auth_check(request: Request) -> Response:
@@ -74,11 +101,10 @@ routes: List[Route] = [
     ),
 ]
 
-app: Starlette = Starlette(debug=True, routes=routes)
-
+app: Starlette = Starlette(debug=True, routes=routes, on_startup=[init])
 
 if __name__ == "__main__":
     import uvicorn
 
     port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run(app, host="0.0.0.0", port=port, access_log=False)

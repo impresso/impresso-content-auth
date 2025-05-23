@@ -58,6 +58,6 @@ poetry run pre-commit install
 
 This will run mypy automatically before committing code.
 
-## License
+## Docker configuration examples
 
-Proprietary
+See the [docker/auth_proxy](docker/auth_proxy) folder for an example of how to run the service in a Docker container and configure it with Nginx.

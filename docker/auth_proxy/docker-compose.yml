@@ -21,6 +21,7 @@ services:
     environment:
       - PORT=8087
       - STATIC_FILES_PATH=/app/static_files
+      - STATIC_SECRET=secret
     ports:
       - "8087:8087"
     volumes:
