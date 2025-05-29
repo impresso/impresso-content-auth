@@ -56,10 +56,24 @@ class CookieBitmapExtractor(TokenExtractorStrategy[Optional[int]]):
             logger.warning("Cookie '%s' not found in request", self.cookie_name)
             return None
 
+        # Get audience from the request
+        fwd_host = request.headers.get("x-forwarded-host")
+        fwd_proto = request.headers.get("x-forwarded-proto")
+        fwd_port = request.headers.get("x-forwarded-port")
+
+        if fwd_host and fwd_proto:
+            port_part = (
+                f":{fwd_port}" if fwd_port and fwd_port not in ["80", "443"] else ""
+            )
+            audience = f"{fwd_proto}://{fwd_host}{port_part}"
+        else:
+            audience = None
+
         # Validate the JWT token
         token_content = validate_jwt(
             token=cookie_value,
             secret=self.jwt_secret,
+            audience=audience,
             algorithms=self.jwt_algorithms,
         )
         if not token_content:

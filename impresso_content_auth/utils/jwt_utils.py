@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 def validate_jwt(
     token: str,
     secret: str,
+    audience: str | None = None,
     algorithms: list[str] | None = None,
 ) -> Optional[Dict[str, Any]]:
     """
@@ -27,7 +28,11 @@ def validate_jwt(
 
     try:
         payload = jwt.decode(
-            token, secret, algorithms=algorithms, options={"verify_exp": True}
+            token,
+            secret,
+            algorithms=algorithms,
+            audience=audience,
+            options={"verify_exp": True},
         )
         return cast(Dict[str, Any], payload)
     except jwt.ExpiredSignatureError:
