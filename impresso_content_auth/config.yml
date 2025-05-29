@@ -1,2 +1,10 @@
 static_files_path: ${STATIC_FILES_PATH}
 static_secret: ${STATIC_SECRET}
+solr:
+  base_url: ${SOLR_BASE_URL}
+  content_item_collection: ${SOLR_CONTENT_ITEM_COLLECTION:impresso}
+  username: ${SOLR_USERNAME}
+  password: ${SOLR_PASSWORD}
+  # Optional proxy URL for Solr
+  # Format: socks5://user:pass@host:port
+  proxy_url: ${SOLR_PROXY_URL}

@@ -1,3 +1,7 @@
+## Coding rules
+
+- Never use f-strings in logging statements.
+
 ## After editing the file
 
 - run black formatter before checking for errors
