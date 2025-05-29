@@ -60,7 +60,6 @@ poetry.toml
 
 # IDE specific files
 .idea/
-.vscode/
 *.swp
 *.swo
 
@@ -76,3 +75,8 @@ Thumbs.db
 # Project specific
 logs/
 *.log
+
+
+.env
+.env.*
+

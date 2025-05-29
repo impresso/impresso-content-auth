@@ -30,7 +30,7 @@ class ManifestWithSecretExtractor(TokenExtractorStrategy[Optional[str]]):
         """
         self.base_path = base_path
 
-    def __call__(self, request: Request) -> Optional[str]:
+    async def __call__(self, request: Request) -> Optional[str]:
         """Extract the secret from the manifest file for the requested resource.
 
         Args:

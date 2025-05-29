@@ -16,7 +16,7 @@ class BearerTokenExtractor(TokenExtractorStrategy[Optional[str]]):
     is found, returns None.
     """
 
-    def __call__(self, request: Request) -> Optional[str]:
+    async def __call__(self, request: Request) -> Optional[str]:
         """Extract bearer token from the request's Authorization header.
 
         Args:

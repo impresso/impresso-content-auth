@@ -21,7 +21,7 @@ class StaticSecretExtractor(TokenExtractorStrategy[str]):
         """
         self.secret = secret
 
-    def __call__(self, request: Request) -> str:
+    async def __call__(self, request: Request) -> str:
         """Return the static secret value.
 
         Args:
