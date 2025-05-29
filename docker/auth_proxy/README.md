@@ -2,6 +2,16 @@
 
 This example demonstrates how to set up an Nginx server as an authentication proxy for local files with manifests containing the secret token.
 
+## Prerequisites
+
+Create the `.env` file in the `docker/auth_proxy` directory with the following content:
+
+```shell
+cat << EOF > .env
+STATIC_FILES_PATH=/app/static_files
+STATIC_SECRET=secret
+EOF
+```
 
 ## Testing
 
@@ -39,6 +49,7 @@ curl http://localhost:8080/freemusicarchive/storage-freemusicarchive-org/music/n
 ```
 
 A 403 Forbidden error should be returned.
+
 Request a file with authentication:
 
 ```shell

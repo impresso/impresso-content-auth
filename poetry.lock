@@ -158,6 +158,9 @@ files = [
     {file = "dependency_injector-4.47.0.tar.gz", hash = "sha256:7a9ee9506b63d844adaed20357bf1ea9e30a4f997a0c56dc6427666b174dc10e"},
 ]
 
+[package.dependencies]
+pyyaml = {version = "*", optional = true, markers = "extra == \"yaml\""}
+
 [package.extras]
 aiohttp = ["aiohttp"]
 flask = ["flask"]
@@ -495,7 +498,7 @@ version = "6.0.2"
 description = "YAML parser and emitter for Python"
 optional = false
 python-versions = ">=3.8"
-groups = ["dev"]
+groups = ["main", "dev"]
 files = [
     {file = "PyYAML-6.0.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:0a9a2848a5b7feac301353437eb7d5957887edbf81d56e903999a75a3d743086"},
     {file = "PyYAML-6.0.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:29717114e51c84ddfba879543fb232a6ed60086602313ca38cce623c1d62cfbf"},
@@ -649,4 +652,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13"
-content-hash = "0f98a6711b2d018d573e025c7dca5a48fa15340a4f430b0833ed5afc7e305a9a"
+content-hash = "cd7577b359d1d84ef15d107d63de68e412030aaa0b8d7287c5f7f7574aed17f2"

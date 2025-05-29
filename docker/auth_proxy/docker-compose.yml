@@ -18,10 +18,10 @@ services:
       context: ../../
       dockerfile: Dockerfile
     command: ["python", "-m", "impresso_content_auth.main", "--server"]
+    env_file:
+      - ./.env
     environment:
       - PORT=8087
-      - STATIC_FILES_PATH=/app/static_files
-      - STATIC_SECRET=secret
     ports:
       - "8087:8087"
     volumes:
