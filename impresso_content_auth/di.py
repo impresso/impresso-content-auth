@@ -16,6 +16,7 @@ from impresso_content_auth.strategy.extractor.solr_document import (
 )
 from impresso_content_auth.strategy.extractor.static_secret import StaticSecretExtractor
 from impresso_content_auth.strategy.matcher.base import NullMatcherStrategy
+from impresso_content_auth.strategy.matcher.bitwise_and import BitWiseAndMatcherStrategy
 from impresso_content_auth.strategy.matcher.equality import EqualityMatcher
 
 
@@ -105,5 +106,6 @@ class Container(containers.DeclarativeContainer):
     matchers: providers.Aggregate = providers.Aggregate(
         {
             "equality": providers.Singleton(EqualityMatcher),
+            "bitwise-and": providers.Singleton(BitWiseAndMatcherStrategy),
         }
     )
