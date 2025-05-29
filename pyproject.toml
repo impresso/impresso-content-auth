@@ -8,6 +8,7 @@ dependencies = [
   "httpx[socks] (>=0.27.0,<1.0.0)",
   "dependency-injector[yaml] (>=4.47.0,<5.0.0)",
   "python-dotenv (>=1.1.0,<2.0.0)",
+  "pyjwt (>=2.7.0,<3.0.0)",
 ]
 description = "Impresso Content Authorization service"
 name = "impresso-content-auth"

@@ -4,6 +4,9 @@ from dependency_injector import containers, providers
 from impresso_content_auth.service.solr import SolrService
 from impresso_content_auth.strategy.extractor.base import NullExtractorStrategy
 from impresso_content_auth.strategy.extractor.bearer_token import BearerTokenExtractor
+from impresso_content_auth.strategy.extractor.cookie_bitmap_extractor import (
+    CookieBitmapExtractor,
+)
 from impresso_content_auth.strategy.extractor.manifest_with_secret import (
     ManifestWithSecretExtractor,
 )
@@ -24,6 +27,10 @@ class AppConfiguration(providers.Configuration):
     def is_static_secret_enabled(self) -> Literal["true", "false"]:
         """Check if the static secret extractor is enabled."""
         return "true" if self.static_secret() is not None else "false"
+
+    def is_cookie_bitmap_enabled(self) -> Literal["true", "false"]:
+        """Check if the cookie bitmap extractor is enabled."""
+        return "true" if self.jwt_secret() is not None else "false"
 
     def is_solr_content_item_enabled(self) -> Literal["true", "false"]:
         """Check if Solr is enabled."""
@@ -80,6 +87,15 @@ class Container(containers.DeclarativeContainer):
                     collection=config.solr.content_item_collection,
                     id_extractor_func=extract_id_from_x_original_uri,
                     field="rights_bm_get_img_l",
+                ),
+                false=null_extractor,
+            ),
+            "cookie-bitmap": providers.Selector(
+                config.is_cookie_bitmap_enabled,
+                true=providers.Singleton(
+                    CookieBitmapExtractor,
+                    cookie_name=config.cookie_name,
+                    jwt_secret=config.jwt_secret,
                 ),
                 false=null_extractor,
             ),

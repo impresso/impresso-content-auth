@@ -1,5 +1,7 @@
 static_files_path: ${STATIC_FILES_PATH}
 static_secret: ${STATIC_SECRET}
+jwt_secret: ${JWT_SECRET}
+cookie_name: impresso_jwt
 solr:
   base_url: ${SOLR_BASE_URL}
   content_item_collection: ${SOLR_CONTENT_ITEM_COLLECTION:impresso}
