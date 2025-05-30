@@ -10,7 +10,7 @@ RUN pip install --no-cache-dir poetry==2.0.0
 RUN poetry config virtualenvs.create false
 
 # Copy only the files needed for dependency installation
-COPY pyproject.toml poetry.lock* README.md ./
+COPY pyproject.toml poetry.lock README.md ./
 
 # Copy the stub or poetry install will fail
 COPY impresso_content_auth/__init__.py /app/impresso_content_auth/__init__.py

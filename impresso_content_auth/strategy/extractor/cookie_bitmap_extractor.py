@@ -25,6 +25,7 @@ class CookieBitmapExtractor(TokenExtractorStrategy[Optional[int]]):
         jwt_secret: str,
         jwt_algorithms: Optional[list[str]] = None,
         bitmap_key: str = "bitmap",
+        verify_audience: bool = True,
     ):
         """
         Initialize the cookie bitmap extractor.
@@ -39,6 +40,7 @@ class CookieBitmapExtractor(TokenExtractorStrategy[Optional[int]]):
         self.jwt_secret = jwt_secret
         self.jwt_algorithms = jwt_algorithms
         self.bitmap_key = bitmap_key
+        self.verify_audience = verify_audience
 
     async def __call__(self, request: Request) -> Optional[int]:
         """
@@ -75,6 +77,7 @@ class CookieBitmapExtractor(TokenExtractorStrategy[Optional[int]]):
             secret=self.jwt_secret,
             audience=audience,
             algorithms=self.jwt_algorithms,
+            verify_audience=self.verify_audience,
         )
         if not token_content:
             logger.warning(
@@ -95,4 +98,4 @@ class CookieBitmapExtractor(TokenExtractorStrategy[Optional[int]]):
 
     def __str__(self) -> str:
         """Return a string representation of the cookie bitmap extractor."""
-        return f"CookieBitmapExtractor(cookie_name='{self.cookie_name}')"
+        return f"CookieBitmapExtractor(cookie_name='{self.cookie_name}', verify_audience={self.verify_audience})"

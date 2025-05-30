@@ -11,6 +11,7 @@ def validate_jwt(
     secret: str,
     audience: str | None = None,
     algorithms: list[str] | None = None,
+    verify_audience: bool = True,
 ) -> Optional[Dict[str, Any]]:
     """
     Validates a JWT token and returns its content as a dictionary.
@@ -32,7 +33,7 @@ def validate_jwt(
             secret,
             algorithms=algorithms,
             audience=audience,
-            options={"verify_exp": True},
+            options={"verify_exp": True, "verify_aud": verify_audience},
         )
         return cast(Dict[str, Any], payload)
     except jwt.ExpiredSignatureError:

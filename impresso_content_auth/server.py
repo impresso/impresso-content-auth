@@ -17,7 +17,6 @@ from impresso_content_auth.strategy.extractor.base import NullExtractorStrategy
 from impresso_content_auth.strategy.matcher.base import NullMatcherStrategy
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 async def health(_request: Request) -> JSONResponse:
@@ -35,12 +34,15 @@ async def lifespan(app: Starlette):  # type: ignore
     """Initialize the application and its components."""
 
     uvicorn_logger = logging.getLogger("uvicorn")
+    root_logger = logging.getLogger()
     for handler in uvicorn_logger.handlers:
-        logger.addHandler(handler)
+        root_logger.addHandler(handler)
 
     load_dotenv()
     app.state.container = Container()
     app.state.container.config.from_yaml(Path(__file__).parent / "config.yml")
+
+    root_logger.setLevel(app.state.container.config.log_level().upper())
 
     for name, extractor_provider in app.state.container.extractors.providers.items():
         extractor = extractor_provider()
@@ -67,6 +69,14 @@ async def lifespan(app: Starlette):  # type: ignore
 
 async def auth_check(request: Request) -> Response:
     """Authorization check endpoint."""
+    if logger.level <= logging.DEBUG:
+        logger.debug(
+            "Authorization check for %s %s (%s)",
+            request.method,
+            request.url.path,
+            request.headers,
+        )
+
     container = request.app.state.container
 
     client_token_extractor_name = request.path_params.get("client_token_extractor")

@@ -3,10 +3,13 @@ Service module for interacting with Solr using httpx.
 """
 
 import json
+import logging
 from typing import Any, Dict, List, Optional, Union, cast
 
 import httpx
 from httpx import Limits, Timeout
+
+logger = logging.getLogger(__name__)
 
 
 class SolrService:
@@ -46,9 +49,29 @@ class SolrService:
             timeout=Timeout(timeout),
             limits=limits,
             headers={"Content-Type": "application/json"},
-            auth=(username, password) if username and password else None,
+            auth=(
+                httpx.BasicAuth(username=username, password=password)
+                if username and password
+                else None
+            ),
             proxy=proxy_url,
         )
+        self._proxy_url = proxy_url
+        self._auth_credentials = (username, password) if username and password else None
+
+    @property
+    def authentication_details(self) -> str | None:
+        """Solr client auth details (redacted)."""
+        if self._auth_credentials:
+            username, password = self._auth_credentials or ("", "")
+            redacted_password = "[REDACTED]" if password else "None"
+            return f"Basic Auth: {username}:{redacted_password}"
+        return None
+
+    @property
+    def proxy_url(self) -> Optional[str]:
+        """Get the proxy URL if configured."""
+        return self._proxy_url
 
     def __del__(self) -> None:
         """Ensure the client is closed when the service is garbage collected."""
@@ -84,6 +107,12 @@ class SolrService:
         url = f"{self.base_url}/{collection}/{handler}"
 
         try:
+            logger.debug(
+                "Sending POST request to Solr collection '%s' at %s with body: %s",
+                collection,
+                url,
+                body,
+            )
             response = self.client.post(
                 url,
                 json=body,
@@ -91,12 +120,13 @@ class SolrService:
             response.raise_for_status()
             return cast(Dict[str, Any], response.json())
         except httpx.HTTPStatusError as e:
-            # Reraise with more context
-            raise httpx.HTTPStatusError(
-                f"Error querying Solr collection '{collection}': {str(e)}",
-                request=e.request,
-                response=e.response,
+            logger.error(
+                "HTTP error querying Solr collection '%s': %s : %s",
+                collection,
+                str(e),
+                response.text,
             )
+            raise e
         except json.JSONDecodeError as exc:
             raise ValueError(
                 f"Invalid JSON response from Solr: {response.text}"

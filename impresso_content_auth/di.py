@@ -12,7 +12,7 @@ from impresso_content_auth.strategy.extractor.manifest_with_secret import (
 )
 from impresso_content_auth.strategy.extractor.solr_document import (
     SolrDocumentExtractor,
-    extract_id_from_x_original_uri,
+    extract_id_from_x_original_uri_with_iiif,
 )
 from impresso_content_auth.strategy.extractor.static_secret import StaticSecretExtractor
 from impresso_content_auth.strategy.matcher.base import NullMatcherStrategy
@@ -86,8 +86,9 @@ class Container(containers.DeclarativeContainer):
                     SolrDocumentExtractor,
                     solr_service=solr_service,
                     collection=config.solr.content_item_collection,
-                    id_extractor_func=extract_id_from_x_original_uri,
+                    id_extractor_func=extract_id_from_x_original_uri_with_iiif,
                     field="rights_bm_get_img_l",
+                    solr_id_field="page_id_ss",
                 ),
                 false=null_extractor,
             ),
@@ -97,6 +98,9 @@ class Container(containers.DeclarativeContainer):
                     CookieBitmapExtractor,
                     cookie_name=config.cookie_name,
                     jwt_secret=config.jwt_secret,
+                    verify_audience=config.jwt_verify_audience.as_(
+                        lambda x: x.lower() == "true" if isinstance(x, str) else x
+                    ),
                 ),
                 false=null_extractor,
             ),

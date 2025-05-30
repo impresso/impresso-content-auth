@@ -31,6 +31,7 @@ class SolrDocumentExtractor(Generic[T], TokenExtractorStrategy[T]):
         collection: str,
         id_extractor_func: Callable[[Request], Optional[str]],
         field: str,
+        solr_id_field: str = "id",
     ):
         """
         Initialize the Solr document extractor.
@@ -45,6 +46,7 @@ class SolrDocumentExtractor(Generic[T], TokenExtractorStrategy[T]):
         self.collection = collection
         self.id_extractor_func = id_extractor_func
         self.field = field
+        self.solr_id_field = solr_id_field
 
     async def __call__(self, request: Request) -> Optional[T]:
         """
@@ -64,7 +66,7 @@ class SolrDocumentExtractor(Generic[T], TokenExtractorStrategy[T]):
 
         try:
             # Query Solr for the document
-            query = f"id:{doc_id}"
+            query = f"{self.solr_id_field}:{doc_id}"
             response = self.solr_service.search(
                 collection=self.collection,
                 q=query,
@@ -91,7 +93,13 @@ class SolrDocumentExtractor(Generic[T], TokenExtractorStrategy[T]):
 
     def __str__(self) -> str:
         """Return a string representation of the extractor."""
-        return f"SolrDocumentExtractor(solr_base_url={self.solr_service.base_url}, collection={self.collection}, field={self.field})"
+        return (
+            f"SolrDocumentExtractor(solr_base_url={self.solr_service.base_url}, "
+            + f"collection={self.collection}, field={self.field}, "
+            + f"solr_id_field={self.solr_id_field}, "
+            + f"auth={self.solr_service.authentication_details}, "
+            + f"proxy={self.solr_service.proxy_url})"
+        )
 
 
 def extract_id_from_x_original_uri(request: Request) -> Optional[str]:
@@ -123,3 +131,51 @@ def extract_id_from_x_original_uri(request: Request) -> Optional[str]:
     id_match = match.group(1)
 
     return id_match
+
+
+def extract_id_from_x_original_uri_with_iiif(request: Request) -> Optional[str]:
+    """
+    Extract document ID from the `X-Original-URI` header of the request.
+
+    This function extracts the document ID from a IIIF URIs following the pattern:
+    /img-1/info.json -> img-1
+    /img-1/default.jpg -> img-1
+    /img-1/full/941,/0/default.jpg -> img-1
+
+    Args:
+        request: The HTTP request
+
+    Returns:
+        The extracted document ID or None if not found
+    """
+    path = request.headers.get("x-original-uri", "")
+    if not path:
+        logger.debug("No 'x-original-uri' header found in request")
+        return None
+
+    if request.headers.get("x-prefix-strip"):
+        prefixes = request.headers.get("x-prefix-strip", "").split(",")
+        for prefix in prefixes:
+            if path.startswith(prefix):
+                path = path[len(prefix) :]  # noqa
+                logger.debug("Stripped prefix '%s' from path: %s", prefix, path)
+                break
+
+    # Split the path into components and extract the ID part
+    # IIIF URI format: /{id}/{region}/{size}/{rotation}/{quality}.{format}
+    # or simpler forms like /{id}/info.json or /{id}/default.jpg
+    path_components = path.strip("/").split("/")
+
+    if not path_components:
+        logger.debug("Empty path in 'x-original-uri' header: %s", path)
+        return None
+
+    # The first component should be the document ID in IIIF URIs
+    document_id = path_components[0]
+
+    if not document_id:
+        logger.debug("Could not extract ID from IIIF URL path: %s", path)
+        return None
+
+    logger.debug("Extracted document ID '%s' from IIIF URL path: %s", document_id, path)
+    return document_id
