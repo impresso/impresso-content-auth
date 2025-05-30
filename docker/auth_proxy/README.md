@@ -18,8 +18,8 @@ EOF
 Start the server:
 
 ```shell
-docker-compose build
-docker-compose up
+docker compose build
+docker compose up
 ```
 
 ## Local File Authentication with manifest

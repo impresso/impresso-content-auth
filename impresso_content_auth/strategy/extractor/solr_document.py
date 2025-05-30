@@ -4,18 +4,19 @@ Strategy module for extracting tokens from Solr documents.
 
 import logging
 import re
-from typing import Callable, Generic, Optional, TypeVar, cast
+from typing import Callable, Generic, Optional, TypeVar
 
 from starlette.requests import Request
 
 from impresso_content_auth.service.solr import SolrService
 from impresso_content_auth.strategy.extractor.base import TokenExtractorStrategy
+from impresso_content_auth.utils.bitmap import BitMask64
 
 T = TypeVar("T")
 logger = logging.getLogger(__name__)
 
 
-class SolrDocumentExtractor(Generic[T], TokenExtractorStrategy[T]):
+class SolrDocumentExtractor(Generic[T], TokenExtractorStrategy[BitMask64]):
     """
     A strategy that extracts tokens from Solr documents based on request parameters.
 
@@ -48,7 +49,7 @@ class SolrDocumentExtractor(Generic[T], TokenExtractorStrategy[T]):
         self.field = field
         self.solr_id_field = solr_id_field
 
-    async def __call__(self, request: Request) -> Optional[T]:
+    async def __call__(self, request: Request) -> Optional[BitMask64]:
         """
         Extract a token from a Solr document based on the request.
 
@@ -82,7 +83,7 @@ class SolrDocumentExtractor(Generic[T], TokenExtractorStrategy[T]):
 
             # Extract token from document
             document = docs[0]
-            return cast(T, document.get(self.field, None))
+            return BitMask64(document.get(self.field, None))
 
         except (ConnectionError, TimeoutError) as e:
             logger.error("Network error while querying Solr: %s", str(e))

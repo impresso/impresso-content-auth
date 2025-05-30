@@ -3,6 +3,8 @@ import jwt
 import logging
 from typing import Dict, Optional, Any, cast
 
+from impresso_content_auth.utils.bitmap import BitMask64
+
 logger = logging.getLogger(__name__)
 
 
@@ -44,7 +46,9 @@ def validate_jwt(
         return None
 
 
-def get_bitmap(token_content: Dict[str, Any], key: str = "bitmap") -> Optional[int]:
+def get_bitmap(
+    token_content: Dict[str, Any], key: str = "bitmap"
+) -> Optional[BitMask64]:
     """
     Extracts a bitmap value from the JWT content, decodes it from base64,
     and returns it as a long.
@@ -58,5 +62,5 @@ def get_bitmap(token_content: Dict[str, Any], key: str = "bitmap") -> Optional[i
     """
     if key in token_content and isinstance(token_content[key], str):
         decoded = base64.b64decode(token_content[key])
-        return int.from_bytes(decoded, byteorder="big")
+        return BitMask64(decoded)
     return None

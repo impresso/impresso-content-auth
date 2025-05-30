@@ -2,13 +2,14 @@ from typing import TypeVar
 import logging
 
 from impresso_content_auth.strategy.matcher.base import TokenMatcherStrategy
+from impresso_content_auth.utils.bitmap import BitMask64, is_access_allowed
 
 logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
 
-class BitWiseAndMatcherStrategy(TokenMatcherStrategy[int]):
+class BitWiseAndMatcherStrategy(TokenMatcherStrategy[BitMask64]):
     """
     A matcher strategy that performs a bitwise AND operation.
 
@@ -16,7 +17,7 @@ class BitWiseAndMatcherStrategy(TokenMatcherStrategy[int]):
     if their bitwise AND operation results in a non-zero value.
     """
 
-    def __call__(self, a: int, b: int) -> bool:
+    def __call__(self, a: BitMask64, b: BitMask64) -> bool:
         """
         Perform a bitwise AND operation on two integers.
 
@@ -30,8 +31,7 @@ class BitWiseAndMatcherStrategy(TokenMatcherStrategy[int]):
             value if threshold is None), False otherwise.
         """
         try:
-            result = a & b
-            return result > 0
+            return is_access_allowed(a, b)
         except (TypeError, ValueError) as e:
             logger.warning("BitWiseAnd match failed: %s", str(e))
             return False

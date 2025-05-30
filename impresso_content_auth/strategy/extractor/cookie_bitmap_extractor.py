@@ -4,12 +4,13 @@ from typing import Optional
 from starlette.requests import Request
 
 from impresso_content_auth.strategy.extractor.base import TokenExtractorStrategy
+from impresso_content_auth.utils.bitmap import BitMask64
 from impresso_content_auth.utils.jwt_utils import validate_jwt, get_bitmap
 
 logger = logging.getLogger(__name__)
 
 
-class CookieBitmapExtractor(TokenExtractorStrategy[Optional[int]]):
+class CookieBitmapExtractor(TokenExtractorStrategy[Optional[BitMask64]]):
     """
     A strategy to extract a bitmap from a JWT token stored in a cookie.
 
@@ -42,7 +43,7 @@ class CookieBitmapExtractor(TokenExtractorStrategy[Optional[int]]):
         self.bitmap_key = bitmap_key
         self.verify_audience = verify_audience
 
-    async def __call__(self, request: Request) -> Optional[int]:
+    async def __call__(self, request: Request) -> Optional[BitMask64]:
         """
         Extract bitmap from JWT token in cookie.
 
@@ -50,7 +51,7 @@ class CookieBitmapExtractor(TokenExtractorStrategy[Optional[int]]):
             request: The incoming HTTP request
 
         Returns:
-            The extracted bitmap as an integer if successful, None otherwise
+            The extracted bitmap as a BitMask64 if successful, None otherwise
         """
         # Get the cookie from the request
         cookie_value = request.cookies.get(self.cookie_name)
