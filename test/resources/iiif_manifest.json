@@ -1,0 +1,93 @@
+{
+  "@context": "http://iiif.io/api/presentation/3/context.json",
+  "id": "https://impresso-project.ch/api/proxy/iiif-audio/CFCE-1996-09-08-a-r0001/manifest.json",
+  "type": "Manifest",
+  "label": {
+    "en": [
+      "Radio Broadcast Audio Record of CFCE on 08/09/1996 with canonical ID CFCE-1996-09-08-a-r0001"
+    ]
+  },
+  "items": [
+    {
+      "id": "http://audio-impresso.epfl.ch/INA/CFCE/1996/09/08/a/canvas",
+      "type": "Canvas",
+      "duration": 3283.04,
+      "metadata": [
+        {
+          "label": {
+            "en": ["issue_id"]
+          },
+          "value": {
+            "en": ["CFCE-1996-09-08-a"]
+          }
+        },
+        {
+          "label": {
+            "en": ["audio_id"]
+          },
+          "value": {
+            "en": ["CFCE-1996-09-08-a-r0001"]
+          }
+        },
+        {
+          "label": {
+            "en": ["ci_id"]
+          },
+          "value": {
+            "en": ["CFCE-1996-09-08-a-i0001"]
+          }
+        },
+        {
+          "label": {
+            "en": ["explore_bitmaps"]
+          },
+          "value": {
+            "en": [
+              "0001000000000000100000000000000000000000000000000000000000000000"
+            ]
+          }
+        },
+        {
+          "label": {
+            "en": ["get_tr_bitmaps"]
+          },
+          "value": {
+            "en": [
+              "0000000000000000100000000000000000000000000000000000000000000000"
+            ]
+          }
+        },
+        {
+          "label": {
+            "en": ["explore_bitmaps"]
+          },
+          "value": {
+            "en": [
+              "0000000000000000100000000000000000000000000000000000000000000000"
+            ]
+          }
+        }
+      ],
+      "items": [
+        {
+          "id": "http://audio-impresso.epfl.ch/INA/CFCE/1996/09/08/a/canvas/page",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "http://audio-impresso.epfl.ch/INA/CFCE/1996/09/08/a/canvas/page/annotation",
+              "type": "Annotation",
+              "motivation": "painting",
+              "body": {
+                "id": "http://audio-impresso.epfl.ch/INA/CFCE/1996/09/08/a/CFCE-1996-09-08-a-r0001.mp3",
+                "type": "Sound",
+                "format": "audio/mp3",
+                "duration": 3283.04
+              },
+              "target": "http://audio-impresso.epfl.ch/INA/CFCE/1996/09/08/ao/canvas"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

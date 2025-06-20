@@ -58,6 +58,18 @@ poetry run pre-commit install
 
 This will run mypy automatically before committing code.
 
+### Code generation
+
+```shell
+poetry run datamodel-codegen \
+  --input  impresso_content_auth/models/resources/schemas/ \
+  --output impresso_content_auth/models/generated \
+  --input-file-type jsonschema \
+  --output-model-type dataclasses.dataclass \
+  --use-field-description \
+  --use-schema-description
+```
+
 ## Docker configuration examples
 
 See the [docker/auth_proxy](docker/auth_proxy) folder for an example of how to run the service in a Docker container and configure it with Nginx.
