@@ -7,6 +7,10 @@ from impresso_content_auth.strategy.extractor.bearer_token import BearerTokenExt
 from impresso_content_auth.strategy.extractor.cookie_bitmap_extractor import (
     CookieBitmapExtractor,
 )
+from impresso_content_auth.strategy.extractor.iiif_presentation_manifest import (
+    IIIFPresentationManifestExtractor,
+    extract_url_from_x_original_uri,
+)
 from impresso_content_auth.strategy.extractor.manifest_with_secret import (
     ManifestWithSecretExtractor,
 )
@@ -103,6 +107,10 @@ class Container(containers.DeclarativeContainer):
                     ),
                 ),
                 false=null_extractor,
+            ),
+            "iiif-presentation-manifest": providers.Singleton(
+                IIIFPresentationManifestExtractor,
+                url_extractor_func=extract_url_from_x_original_uri,
             ),
         }
     )
