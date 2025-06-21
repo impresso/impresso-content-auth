@@ -9,6 +9,7 @@ dependencies = [
   "dependency-injector[yaml] (>=4.47.0,<5.0.0)",
   "python-dotenv (>=1.1.0,<2.0.0)",
   "pyjwt (>=2.7.0,<3.0.0)",
+  "dacite (>=1.8.1,<2.0.0)",
 ]
 description = "Impresso Content Authorization service"
 name = "impresso-content-auth"
@@ -25,9 +26,15 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 
 [tool.poetry.group.dev.dependencies]
 black = "^25.1.0"
+datamodel-code-generator = "^0.31.1"
 flake8 = "^7.2.0"
 mypy = "^1.15.0"
 pre-commit = "^4.2.0"
+pytest = "^8.4.1"
+pytest-asyncio = "^0.23.7"
 
 [tool.flake8]
 max-line-length = 120
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
