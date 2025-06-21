@@ -60,7 +60,7 @@ async def test_extract_bitmap_from_manifest_success(
             "type": "http",
             "headers": Headers(
                 {
-                    "host": "example.com",
+                    "x-forwarded-host": "example.com",
                     "x-original-uri": "/foo/bar.mp3",
                 }
             ).raw,
@@ -183,7 +183,7 @@ def test_extract_url_from_x_original_uri() -> None:
             "type": "http",
             "headers": Headers(
                 {
-                    "host": "impresso-project.ch",
+                    "x-forwarded-host": "impresso-project.ch",
                     "x-forwarded-proto": "https",
                     "x-original-uri": "/api/proxy/iiif-audio/CFCE-1996-09-08-a-r0001/CFCE-1996-09-08-a-r0001.mp3",
                 }
