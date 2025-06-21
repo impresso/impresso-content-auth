@@ -152,7 +152,7 @@ class IIIFPresentationManifestExtractor(Generic[T], TokenExtractorStrategy[BitMa
                 ),
             )
         except httpx.RequestError as e:
-            logger.error("Error fetching manifest: %s", str(e))
+            logger.error("Error fetching manifest (%s): %s", url, str(e))
             raise
 
     def _extract_bitmap_from_manifest(
