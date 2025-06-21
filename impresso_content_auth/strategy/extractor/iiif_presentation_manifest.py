@@ -232,7 +232,7 @@ def extract_url_from_x_original_uri(request: Request) -> Optional[str]:
         return None
 
     # Extract the host from headers
-    host = request.headers.get("host", "")
+    host = request.headers.get("x-forwarded-host", "")
     if not host:
         logger.debug("No 'host' header found in request")
         return None
