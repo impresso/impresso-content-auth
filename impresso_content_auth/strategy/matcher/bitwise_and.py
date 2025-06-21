@@ -31,7 +31,16 @@ class BitWiseAndMatcherStrategy(TokenMatcherStrategy[BitMask64]):
             value if threshold is None), False otherwise.
         """
         try:
-            return is_access_allowed(a, b)
+            access_is_allowed = is_access_allowed(a, b)
+            if access_is_allowed:
+                logger.debug(
+                    "BitWiseAnd match succeeded: %s & %s = %s", a, b, access_is_allowed
+                )
+            else:
+                logger.debug(
+                    "BitWiseAnd match failed: %s & %s = %s", a, b, access_is_allowed
+                )
+            return access_is_allowed
         except (TypeError, ValueError) as e:
             logger.warning("BitWiseAnd match failed: %s", str(e))
             return False
