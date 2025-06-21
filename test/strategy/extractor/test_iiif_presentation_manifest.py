@@ -87,7 +87,9 @@ async def test_extract_bitmap_from_manifest_success(
         str(result)
         == "0001000000000000100000000000000000000000000000000000000000000000"
     )
-    mock_client.get.assert_called_once_with("http://example.com/foo/manifest.json")
+    mock_client.get.assert_called_once_with(
+        "https://example.com/foo/manifest.json", follow_redirects=True
+    )
 
 
 async def test_manifest_not_found() -> None:

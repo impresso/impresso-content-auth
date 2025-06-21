@@ -136,7 +136,7 @@ class IIIFPresentationManifestExtractor(Generic[T], TokenExtractorStrategy[BitMa
             The parsed manifest as a dictionary, or None if not found
         """
         try:
-            response = await self.client.get(url)
+            response = await self.client.get(url, follow_redirects=True)
             if response.status_code != 200:
                 logger.debug(
                     "Failed to fetch manifest: %s (status %d)",
@@ -238,7 +238,7 @@ def extract_url_from_x_original_uri(request: Request) -> Optional[str]:
         return None
 
     # Determine scheme (http or https)
-    scheme = "https" if request.headers.get("x-forwarded-proto") == "https" else "http"
+    scheme = request.headers.get("x-forwarded-proto") or "https"
 
     # Construct full URL
     full_url = f"{scheme}://{host}{path}"
