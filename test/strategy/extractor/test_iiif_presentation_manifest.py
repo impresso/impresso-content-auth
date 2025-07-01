@@ -85,7 +85,7 @@ async def test_extract_bitmap_from_manifest_success(
     assert isinstance(result, BitMask64)
     assert (
         str(result)
-        == "0001000000000000100000000000000000000000000000000000000000000000"
+        == "0001000000000000100000000000000000000000000000000000000000000000"[::-1]
     )
     mock_client.get.assert_called_once_with(
         "https://example.com/foo/manifest.json", follow_redirects=True

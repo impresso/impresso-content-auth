@@ -194,7 +194,11 @@ class IIIFPresentationManifestExtractor(Generic[T], TokenExtractorStrategy[BitMa
                                 isinstance(lang_bitmap_values, list)
                                 and lang_bitmap_values
                             ):
-                                return cast(str, lang_bitmap_values[0])
+                                bitmap_value = cast(str, lang_bitmap_values[0])
+                                # The bitmap in the manifest is reversed so
+                                # we need to reverse it back
+                                bitmap_value = bitmap_value[::-1]
+                                return bitmap_value
 
             return None
 
