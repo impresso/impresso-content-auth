@@ -34,7 +34,7 @@ class IIIFPresentationManifestExtractor(Generic[T], TokenExtractorStrategy[BitMa
     def __init__(
         self,
         url_extractor_func: Callable[[Request], Optional[str]],
-        metadata_field: str = "explore_bitmaps",
+        metadata_field: str = "explore_bitmap",
         manifest_path: str = "manifest.json",
         timeout: int = 10,
     ):
