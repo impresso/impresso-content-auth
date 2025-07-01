@@ -87,7 +87,7 @@ class IIIFPresentationManifestExtractor(Generic[T], TokenExtractorStrategy[BitMa
                 logger.debug("Extracted bitmap: %s", bitmap)
                 return BitMask64(bitmap)
             else:
-                logger.debug("No bitmap found in manifest metadata")
+                logger.debug("No bitmap found in manifest metadata: %s", manifest)
                 return None
 
         except (httpx.RequestError, httpx.HTTPStatusError) as e:

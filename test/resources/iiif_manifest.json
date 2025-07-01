@@ -1,24 +1,22 @@
 {
   "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "https://impresso-project.ch/api/proxy/iiif-audio/CFCE-1996-09-08-a-r0001/manifest.json",
+  "id": "https://impresso-project.ch/media/audio/INA/RDN/1950/01/12/a/manifest.json",
   "type": "Manifest",
   "label": {
-    "en": [
-      "Radio Broadcast Audio Record of CFCE on 08/09/1996 with canonical ID CFCE-1996-09-08-a-r0001"
-    ]
+    "en": ["Radio Broadcast Audio Record of RDN on 12/01/1950."]
   },
   "items": [
     {
-      "id": "http://audio-impresso.epfl.ch/INA/CFCE/1996/09/08/a/canvas",
+      "id": "https://impresso-project.ch/media/audio/INA/RDN/1950/01/12/a/canvas",
       "type": "Canvas",
-      "duration": 3283.04,
+      "duration": 3315,
       "metadata": [
         {
           "label": {
             "en": ["issue_id"]
           },
           "value": {
-            "en": ["CFCE-1996-09-08-a"]
+            "en": ["RDN-1950-01-12-a"]
           }
         },
         {
@@ -26,7 +24,7 @@
             "en": ["audio_id"]
           },
           "value": {
-            "en": ["CFCE-1996-09-08-a-r0001"]
+            "en": ["RDN-1950-01-12-a-r0001"]
           }
         },
         {
@@ -34,12 +32,12 @@
             "en": ["ci_id"]
           },
           "value": {
-            "en": ["CFCE-1996-09-08-a-i0001"]
+            "en": ["RDN-1950-01-12-a-i0001"]
           }
         },
         {
           "label": {
-            "en": ["explore_bitmaps"]
+            "en": ["explore_bitmap"]
           },
           "value": {
             "en": [
@@ -49,7 +47,7 @@
         },
         {
           "label": {
-            "en": ["get_tr_bitmaps"]
+            "en": ["get_tr_bitmap"]
           },
           "value": {
             "en": [
@@ -59,7 +57,7 @@
         },
         {
           "label": {
-            "en": ["explore_bitmaps"]
+            "en": ["get_img_bitmaps"]
           },
           "value": {
             "en": [
@@ -70,20 +68,20 @@
       ],
       "items": [
         {
-          "id": "http://audio-impresso.epfl.ch/INA/CFCE/1996/09/08/a/canvas/page",
+          "id": "https://impresso-project.ch/media/audio/INA/RDN/1950/01/12/a/canvas/page",
           "type": "AnnotationPage",
           "items": [
             {
-              "id": "http://audio-impresso.epfl.ch/INA/CFCE/1996/09/08/a/canvas/page/annotation",
+              "id": "https://impresso-project.ch/media/audio/INA/RDN/1950/01/12/a/canvas/page/annotation",
               "type": "Annotation",
               "motivation": "painting",
               "body": {
-                "id": "http://audio-impresso.epfl.ch/INA/CFCE/1996/09/08/a/CFCE-1996-09-08-a-r0001.mp3",
+                "id": "https://impresso-project.ch/media/audio/INA/RDN/1950/01/12/a/RDN-1950-01-12-a-r0001.mp3",
                 "type": "Sound",
                 "format": "audio/mp3",
-                "duration": 3283.04
+                "duration": 3315
               },
-              "target": "http://audio-impresso.epfl.ch/INA/CFCE/1996/09/08/ao/canvas"
+              "target": "https://impresso-project.ch/media/audio/INA/RDN/1950/01/12/a/canvas"
             }
           ]
         }
