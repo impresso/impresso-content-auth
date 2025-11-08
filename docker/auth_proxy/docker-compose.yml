@@ -3,16 +3,20 @@ version: "3"
 services:
   nginx:
     container_name: nginx
-    image: nginx:latest
+    image: openresty/openresty:alpine
     ports:
       - "8080:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+      - ./header_filter.lua:/usr/local/openresty/nginx/conf/header_filter.lua:ro
+      - ./body_filter.lua:/usr/local/openresty/nginx/conf/body_filter.lua:ro
       - ./static_files:/static_files:ro
     depends_on:
       - auth-service
     networks:
       - app-network
+    env_file:
+      - ./.env
 
   auth-service:
     container_name: auth-service

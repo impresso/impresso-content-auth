@@ -42,25 +42,25 @@ async def lifespan(app: Starlette):  # type: ignore
     app.state.container = Container()
     app.state.container.config.from_yaml(Path(__file__).parent / "config.yml")
 
-    root_logger.setLevel(app.state.container.config.log_level().upper())
+    log_level = app.state.container.config.log_level().upper()
+    root_logger.setLevel(log_level)
+    logger.info(f"Starting Impresso Content Auth server with log level {log_level}...")
 
     for name, extractor_provider in app.state.container.extractors.providers.items():
         extractor = extractor_provider()
-        if not isinstance(extractor, NullExtractorStrategy):
-            logger.info(
-                "Configured extractor: %s: %s",
-                name,
-                extractor,
-            )
+        logger.info(
+            "Configured extractor: %s: %s",
+            name,
+            extractor,
+        )
 
     for name, matcher_provider in app.state.container.matchers.providers.items():
         matcher = matcher_provider()
-        if not isinstance(matcher, NullMatcherStrategy):
-            logger.info(
-                "Configured matcher: %s: %s",
-                name,
-                matcher,
-            )
+        logger.info(
+            "Configured matcher: %s: %s",
+            name,
+            matcher,
+        )
 
     yield
     # Cleanup logic if needed
@@ -77,7 +77,7 @@ async def auth_check(request: Request) -> Response:
             request.headers,
         )
 
-    container = request.app.state.container
+    container: Container = request.app.state.container
 
     client_token_extractor_name = request.path_params.get("client_token_extractor")
     resource_token_extractor_name = request.path_params.get("resource_token_extractor")
@@ -117,6 +117,8 @@ async def auth_check(request: Request) -> Response:
         client_token_extractor(request),
         resource_token_extractor(request),
     )
+    logger.debug("Extracted client token: %s using %s (%s)", client_token, client_token_extractor, client_token_extractor_name)
+    logger.debug("Extracted resource token: %s using %s (%s)", resource_token, resource_token_extractor, resource_token_extractor_name)
 
     if client_token is None or resource_token is None:
         # If either token is None, we can't proceed with the comparison
