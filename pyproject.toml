@@ -3,6 +3,7 @@ authors = [
   {name = "Roman Kalyakin", email = "roman@kalyakin.com"},
 ]
 dependencies = [
+  "cachetools (>=6.2.1,<7.0.0)",
   "starlette (>=0.46.2,<0.47.0)",
   "uvicorn (>=0.34.2,<0.35.0)",
   "httpx[socks] (>=0.27.0,<1.0.0)",
@@ -32,6 +33,7 @@ mypy = "^1.15.0"
 pre-commit = "^4.2.0"
 pytest = "^8.4.1"
 pytest-asyncio = "^0.23.7"
+types-cachetools = "^6.2.0"
 
 [tool.flake8]
 max-line-length = 120

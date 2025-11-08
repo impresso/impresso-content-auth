@@ -5,12 +5,21 @@ Service module for interacting with Solr using httpx.
 import json
 import logging
 from typing import Any, Dict, List, Optional, Union, cast
+from cachetools import TTLCache
 
 import httpx
 from httpx import Limits, Timeout
 
 logger = logging.getLogger(__name__)
 
+def _get_post_key(url: str, json_data: Dict[str, Any]) -> str:
+    """Generates a unique, hashable key from the URL and sorted JSON data."""
+    # 1. Sort the JSON data to ensure consistent key generation 
+    #    (order of keys shouldn't matter for the cache)
+    sorted_json_str = json.dumps(json_data, sort_keys=True)
+    
+    # 2. Combine the URL and the sorted JSON string
+    return f"{url}:{sorted_json_str}"
 
 class SolrService:
     """
@@ -58,6 +67,7 @@ class SolrService:
         )
         self._proxy_url = proxy_url
         self._auth_credentials = (username, password) if username and password else None
+        self._cache = TTLCache[str, str](maxsize=10000, ttl=3600)
 
     @property
     def authentication_details(self) -> str | None:
@@ -106,6 +116,16 @@ class SolrService:
         """
         url = f"{self.base_url}/{collection}/{handler}"
 
+        cached_response = self._cache.get(_get_post_key(url, body))
+        if cached_response is not None:
+            logger.debug(
+                "Cache hit for Solr POST request to collection '%s' at %s with body: %s",
+                collection,
+                url,
+                body,
+            )
+            return cast(Dict[str, Any], json.loads(cached_response))
+
         try:
             logger.debug(
                 "Sending POST request to Solr collection '%s' at %s with body: %s",
@@ -118,7 +138,9 @@ class SolrService:
                 json=body,
             )
             response.raise_for_status()
-            return cast(Dict[str, Any], response.json())
+            result = cast(Dict[str, Any], response.json())
+            self._cache[_get_post_key(url, body)] = json.dumps(result)
+            return result
         except httpx.HTTPStatusError as e:
             logger.error(
                 "HTTP error querying Solr collection '%s': %s : %s",
