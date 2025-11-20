@@ -4,6 +4,10 @@ static_secret: ${STATIC_SECRET}
 jwt_secret: ${JWT_SECRET}
 jwt_verify_audience: ${JWT_VERIFY_AUDIENCE:false}
 cookie_name: impresso_jwt
+redis:
+  url: ${REDIS_URL:redis://localhost:6379/0}
+  quota_limit: ${REDIS_QUOTA_LIMIT:200000}
+  window_days: ${REDIS_WINDOW_DAYS:30}
 solr:
   base_url: ${SOLR_BASE_URL}
   content_item_collection: ${SOLR_CONTENT_ITEM_COLLECTION:impresso}

@@ -13,8 +13,7 @@ from starlette.routing import Route
 from starlette.status import HTTP_200_OK, HTTP_403_FORBIDDEN
 
 from impresso_content_auth.di import Container
-from impresso_content_auth.strategy.extractor.base import NullExtractorStrategy
-from impresso_content_auth.strategy.matcher.base import NullMatcherStrategy
+from impresso_content_auth.strategy.matcher.quota_matcher import QuotaMatcher
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +66,7 @@ async def lifespan(app: Starlette):  # type: ignore
     logger.info("Shutting down Impresso Content Auth server...")
 
 
-async def auth_check(request: Request) -> Response:
+async def auth_check(request: Request, check_quota: bool) -> Response:
     """Authorization check endpoint."""
     if logger.level <= logging.DEBUG:
         logger.debug(
@@ -78,6 +77,20 @@ async def auth_check(request: Request) -> Response:
         )
 
     container: Container = request.app.state.container
+
+    # 1 check quota if requested
+    if check_quota:
+        quota_matcher_init = container.matchers.providers.get("quota")
+        if quota_matcher_init:
+            quota_matcher: QuotaMatcher = quota_matcher_init()
+            quota_not_reached = await quota_matcher(request)
+            if not quota_not_reached:
+                logger.info("Quota reached for request: %s", request.url.path)
+                return Response(
+                    status_code=HTTP_403_FORBIDDEN,
+                    headers={"X-Redirect-Url": "https://http.cat/429"}
+                )
+
 
     client_token_extractor_name = request.path_params.get("client_token_extractor")
     resource_token_extractor_name = request.path_params.get("resource_token_extractor")
@@ -130,12 +143,21 @@ async def auth_check(request: Request) -> Response:
         )
     )
 
+async def auth_check_no_quota_check(request: Request) -> Response:
+    return await auth_check(request, check_quota=False)
+
+async def auth_check_with_quota_check(request: Request) -> Response:
+    return await auth_check(request, check_quota=True)
 
 routes: List[Route] = [
     Route("/health", endpoint=health),
     Route(
         "/{matcher:str}/{client_token_extractor:str}/{resource_token_extractor:str}",
-        endpoint=auth_check,
+        endpoint=auth_check_no_quota_check,
+    ),
+    Route(
+        "/{matcher:str}/{client_token_extractor:str}/{resource_token_extractor:str}/with-quota-check",
+        endpoint=auth_check_with_quota_check,
     ),
 ]
 
