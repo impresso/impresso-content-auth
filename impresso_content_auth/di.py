@@ -129,6 +129,18 @@ class Container(containers.DeclarativeContainer):
                 ),
                 false=null_extractor,
             ),
+            "content-item-explore-bitmap": providers.Selector(
+                config.is_solr_content_item_enabled,
+                true=providers.Singleton(
+                    SolrDocumentExtractor,
+                    solr_service=solr_service,
+                    collection=config.solr.content_item_collection,
+                    id_extractor_func=extract_id_from_x_original_uri_with_iiif,
+                    field="rights_bm_explore_l",
+                    solr_id_field="page_id_ss",
+                ),
+                false=null_extractor,
+            ),
             "cookie-bitmap": providers.Selector(
                 config.is_cookie_bitmap_enabled,
                 true=providers.Singleton(
