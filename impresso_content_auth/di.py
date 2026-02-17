@@ -26,7 +26,7 @@ from impresso_content_auth.strategy.extractor.manifest_with_secret import (
 )
 from impresso_content_auth.strategy.extractor.solr_document import (
     SolrDocumentExtractor,
-    extract_id_from_x_original_uri_with_iiif,
+    extract_id_from_x_original_uri_with_iiif, extract_id_from_x_original_uri_with_iiif_and_wildcard_page_suffix,
 )
 from impresso_content_auth.strategy.extractor.static_secret import StaticSecretExtractor
 from impresso_content_auth.strategy.matcher.base import NullMatcherStrategy
@@ -79,7 +79,7 @@ class Container(containers.DeclarativeContainer):
 
     null_quota_checker: providers.Singleton[NullQuotaChecker] = providers.Singleton(NullQuotaChecker)
 
-    quota_checker: providers.Selector[QuotaChecker] = providers.Selector(
+    quota_checker: providers.Selector = providers.Selector(
         config.is_redis_quota_checker_enabled,
         true=providers.Singleton(
             RedisQuotaChecker,
@@ -123,9 +123,13 @@ class Container(containers.DeclarativeContainer):
                     SolrDocumentExtractor,
                     solr_service=solr_service,
                     collection=config.solr.content_item_collection,
-                    id_extractor_func=extract_id_from_x_original_uri_with_iiif,
                     field="rights_bm_get_img_l",
-                    solr_id_field="page_id_ss",
+                    # - To match by page ID:
+                    # id_extractor_func=extract_id_from_x_original_uri_with_iiif,
+                    # solr_id_field="page_id_ss",
+                    # - To match by content item ID prefix:
+                    solr_id_field="id",
+                    id_extractor_func=extract_id_from_x_original_uri_with_iiif_and_wildcard_page_suffix,
                 ),
                 false=null_extractor,
             ),
@@ -135,9 +139,13 @@ class Container(containers.DeclarativeContainer):
                     SolrDocumentExtractor,
                     solr_service=solr_service,
                     collection=config.solr.content_item_collection,
-                    id_extractor_func=extract_id_from_x_original_uri_with_iiif,
                     field="rights_bm_explore_l",
-                    solr_id_field="page_id_ss",
+                    # - To match by page ID:
+                    # id_extractor_func=extract_id_from_x_original_uri_with_iiif,
+                    # solr_id_field="page_id_ss",
+                    # - To match by content item ID prefix:
+                    solr_id_field="id",
+                    id_extractor_func=extract_id_from_x_original_uri_with_iiif_and_wildcard_page_suffix,
                 ),
                 false=null_extractor,
             ),
