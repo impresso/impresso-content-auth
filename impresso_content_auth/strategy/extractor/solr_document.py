@@ -180,3 +180,26 @@ def extract_id_from_x_original_uri_with_iiif(request: Request) -> Optional[str]:
 
     logger.debug("Extracted document ID '%s' from IIIF URL path: %s", document_id, path)
     return document_id
+
+def extract_id_from_x_original_uri_with_iiif_and_wildcard_page_suffix(
+    request: Request,
+) -> Optional[str]:
+    """
+    Extract document ID from the `X-Original-URI` header of the request,
+    replacing the page suffix with a wildcard.
+
+    E.g. EXP-1829-03-26-a-p0007 -> EXP-1829-03-26-a-*
+
+    Args:
+        request: The HTTP request
+
+    Returns:
+        The extracted document ID with wildcard page or None if not found
+    """
+    id_with_page = extract_id_from_x_original_uri_with_iiif(request)
+    if not id_with_page:
+        return None
+
+    # Replace page suffix (p followed by digits) at the end of the string with *
+    # We look for -p\d+$ pattern
+    return re.sub(r"-p\d+$", "-*", id_with_page)

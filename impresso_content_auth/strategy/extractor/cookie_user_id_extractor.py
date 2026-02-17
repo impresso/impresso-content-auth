@@ -86,7 +86,7 @@ class CookieUserIdExtractor(TokenExtractorStrategy[Optional[str]]):
             return None
 
         # Extract the user ID from the `sub` claim
-        user_id = token_content.get("sub")
+        user_id: str | None = token_content.get("sub")
         if not user_id:
             logger.warning("User ID ('sub' claim) not found in validated token")
             return None
