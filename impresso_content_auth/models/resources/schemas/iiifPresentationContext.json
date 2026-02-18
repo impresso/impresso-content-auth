@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "IIIF Presentation API v3 Manifest Schema",
+  "description": "Schema for validating IIIF Presentation API v3 manifests with audio content",
+  "type": "object",
+  "required": ["@context", "id", "type", "label", "items"],
+  "definitions": {
+    "languageMap": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z]{2,3}(-[A-Z]{2})?$": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "metadataItem": {
+      "type": "object",
+      "required": ["label", "value"],
+      "properties": {
+        "label": {
+          "$ref": "#/definitions/languageMap"
+        },
+        "value": {
+          "$ref": "#/definitions/languageMap"
+        }
+      }
+    },
+    "annotation": {
+      "type": "object",
+      "required": ["id", "type", "motivation", "body", "target"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uri"
+        },
+        "type": {
+          "type": "string",
+          "const": "Annotation"
+        },
+        "motivation": {
+          "type": "string"
+        },
+        "body": {
+          "$ref": "#/definitions/sound"
+        },
+        "target": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "sound": {
+      "type": "object",
+      "required": ["id", "type", "format", "duration"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uri"
+        },
+        "type": {
+          "type": "string",
+          "const": "Sound"
+        },
+        "format": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "number"
+        }
+      }
+    },
+    "annotationPage": {
+      "type": "object",
+      "required": ["id", "type", "items"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uri"
+        },
+        "type": {
+          "type": "string",
+          "const": "AnnotationPage"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/annotation"
+          }
+        }
+      }
+    },
+    "canvas": {
+      "type": "object",
+      "description": "Item on the canvas",
+      "required": ["id", "type", "duration", "items"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uri",
+          "description": "Canonical/base URI of the canvas item"
+        },
+        "type": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "number",
+          "description": "Duration of the audio content in seconds"
+        },
+        "metadata": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/metadataItem"
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/annotationPage"
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "@context": {
+      "type": "string",
+      "const": "http://iiif.io/api/presentation/3/context.json"
+    },
+    "id": {
+      "type": "string",
+      "format": "uri",
+      "description": "Canonical URI of the manifest"
+    },
+    "type": {
+      "type": "string",
+      "const": "Manifest"
+    },
+    "label": {
+      "$ref": "#/definitions/languageMap",
+      "description": "Human-readable label for the manifest in multiple languages"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/canvas"
+      }
+    }
+  }
+}

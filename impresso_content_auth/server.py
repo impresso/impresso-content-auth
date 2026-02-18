@@ -13,8 +13,7 @@ from starlette.routing import Route
 from starlette.status import HTTP_200_OK, HTTP_403_FORBIDDEN
 
 from impresso_content_auth.di import Container
-from impresso_content_auth.strategy.extractor.base import NullExtractorStrategy
-from impresso_content_auth.strategy.matcher.base import NullMatcherStrategy
+from impresso_content_auth.strategy.matcher.quota_matcher import QuotaMatcher
 
 logger = logging.getLogger(__name__)
 
@@ -42,32 +41,32 @@ async def lifespan(app: Starlette):  # type: ignore
     app.state.container = Container()
     app.state.container.config.from_yaml(Path(__file__).parent / "config.yml")
 
-    root_logger.setLevel(app.state.container.config.log_level().upper())
+    log_level = app.state.container.config.log_level().upper()
+    root_logger.setLevel(log_level)
+    logger.info(f"Starting Impresso Content Auth server with log level {log_level}...")
 
     for name, extractor_provider in app.state.container.extractors.providers.items():
         extractor = extractor_provider()
-        if not isinstance(extractor, NullExtractorStrategy):
-            logger.info(
-                "Configured extractor: %s: %s",
-                name,
-                extractor,
-            )
+        logger.info(
+            "Configured extractor: %s: %s",
+            name,
+            extractor,
+        )
 
     for name, matcher_provider in app.state.container.matchers.providers.items():
         matcher = matcher_provider()
-        if not isinstance(matcher, NullMatcherStrategy):
-            logger.info(
-                "Configured matcher: %s: %s",
-                name,
-                matcher,
-            )
+        logger.info(
+            "Configured matcher: %s: %s",
+            name,
+            matcher,
+        )
 
     yield
     # Cleanup logic if needed
     logger.info("Shutting down Impresso Content Auth server...")
 
 
-async def auth_check(request: Request) -> Response:
+async def auth_check(request: Request, check_quota: bool) -> Response:
     """Authorization check endpoint."""
     if logger.level <= logging.DEBUG:
         logger.debug(
@@ -77,7 +76,21 @@ async def auth_check(request: Request) -> Response:
             request.headers,
         )
 
-    container = request.app.state.container
+    container: Container = request.app.state.container
+
+    # 1 check quota if requested
+    if check_quota:
+        quota_matcher_init = container.matchers.providers.get("quota")
+        if quota_matcher_init:
+            quota_matcher: QuotaMatcher = quota_matcher_init()
+            quota_not_reached = await quota_matcher(request)
+            if not quota_not_reached:
+                logger.info("Quota reached for request: %s", request.url.path)
+                return Response(
+                    status_code=HTTP_403_FORBIDDEN,
+                    headers={"X-Redirect-Url": "https://http.cat/429"}
+                )
+
 
     client_token_extractor_name = request.path_params.get("client_token_extractor")
     resource_token_extractor_name = request.path_params.get("resource_token_extractor")
@@ -117,6 +130,8 @@ async def auth_check(request: Request) -> Response:
         client_token_extractor(request),
         resource_token_extractor(request),
     )
+    logger.debug("Extracted client token: %s using %s (%s)", client_token, client_token_extractor, client_token_extractor_name)
+    logger.debug("Extracted resource token: %s using %s (%s)", resource_token, resource_token_extractor, resource_token_extractor_name)
 
     if client_token is None or resource_token is None:
         # If either token is None, we can't proceed with the comparison
@@ -128,12 +143,21 @@ async def auth_check(request: Request) -> Response:
         )
     )
 
+async def auth_check_no_quota_check(request: Request) -> Response:
+    return await auth_check(request, check_quota=False)
+
+async def auth_check_with_quota_check(request: Request) -> Response:
+    return await auth_check(request, check_quota=True)
 
 routes: List[Route] = [
     Route("/health", endpoint=health),
     Route(
         "/{matcher:str}/{client_token_extractor:str}/{resource_token_extractor:str}",
-        endpoint=auth_check,
+        endpoint=auth_check_no_quota_check,
+    ),
+    Route(
+        "/{matcher:str}/{client_token_extractor:str}/{resource_token_extractor:str}/with-quota-check",
+        endpoint=auth_check_with_quota_check,
     ),
 ]
 

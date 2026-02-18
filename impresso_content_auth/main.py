@@ -24,7 +24,8 @@ def main() -> int:
         import uvicorn
 
         port = int(os.environ.get("PORT", 8000))
-        uvicorn.run(app, host="0.0.0.0", port=port)
+        log_level = os.environ.get("LOG_LEVEL", "info").lower()
+        uvicorn.run(app, host="0.0.0.0", port=port, log_level=log_level)
     else:
         print("Impresso Content Authorization Tool")
         print("Use --server flag to start the web server")
