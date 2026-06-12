@@ -168,17 +168,10 @@ class IIIFPresentationManifestExtractor(Generic[T], TokenExtractorStrategy[BitMa
             The bitmap value as a string, or None if not found
         """
         try:
-            # Navigate through manifest structure to find items
-            if not manifest.items:
+            if not manifest.metadata:
                 return None
 
-            # Look for metadata in the first canvas
-            canvas = manifest.items[0]
-            if not canvas.metadata:
-                return None
-
-            # Find metadata item matching the target field
-            for item in canvas.metadata:
+            for item in manifest.metadata:
                 if not item.label:
                     continue
 
