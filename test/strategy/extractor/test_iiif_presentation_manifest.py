@@ -85,7 +85,7 @@ async def test_extract_bitmap_from_manifest_success(
     assert isinstance(result, BitMask64)
     assert (
         str(result)
-        == "0001000000000000100000000000000000000000000000000000000000000000"[::-1]
+        == "0100000000000000000000000000000000000000000000000000000000000000"[::-1]
     )
     mock_client.get.assert_called_once_with(
         "https://example.com/foo/manifest.json", follow_redirects=True
@@ -134,11 +134,11 @@ async def test_no_bitmap_in_manifest(manifest_dict_fixture: Dict[str, Any]) -> N
         }
     )
 
-    # Create a manifest without the 'explore_bitmaps'
-    manifest_dict_fixture["items"][0]["metadata"] = [
+    # Create a manifest without the 'explore_bitmap'
+    manifest_dict_fixture["metadata"] = [
         item
-        for item in manifest_dict_fixture["items"][0]["metadata"]
-        if "explore_bitmaps" not in item.get("label", {}).get("en", [])
+        for item in manifest_dict_fixture["metadata"]
+        if "explore_bitmap" not in item.get("label", {}).get("en", [])
     ]
 
     # Mock the HTTP client

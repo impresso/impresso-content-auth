@@ -1,87 +1,109 @@
 {
   "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "https://impresso-project.ch/media/audio/INA/RDN/1950/01/12/a/manifest.json",
+  "id": "https://impresso-project.ch/media/audio/RTS/bigbang/1996/06/27/a/manifest.json",
   "type": "Manifest",
   "label": {
-    "en": ["Radio Broadcast Audio Record of RDN on 12/01/1950."]
+    "en": [
+      "Radio Broadcast Audio Record of bigbang on 27/06/1996 with canonical ID bigbang-1996-06-27-a-r0001"
+    ]
   },
+  "metadata": [
+    {
+      "label": {
+        "en": [
+          "issue_id"
+        ]
+      },
+      "value": {
+        "en": [
+          "bigbang-1996-06-27-a"
+        ]
+      }
+    },
+    {
+      "label": {
+        "en": [
+          "explore_bitmap"
+        ]
+      },
+      "value": {
+        "en": [
+          "0100000000000000000000000000000000000000000000000000000000000000"
+        ]
+      }
+    },
+    {
+      "label": {
+        "en": [
+          "get_tr_bitmap"
+        ]
+      },
+      "value": {
+        "en": [
+          "0000000000000000010000000000000000000000000000000000000000000000"
+        ]
+      }
+    },
+    {
+      "label": {
+        "en": [
+          "get_img_bitmap"
+        ]
+      },
+      "value": {
+        "en": [
+          "0000000000000000010000000000000000000000000000000000000000000000"
+        ]
+      }
+    }
+  ],
   "items": [
     {
-      "id": "https://impresso-project.ch/media/audio/INA/RDN/1950/01/12/a/canvas",
+      "id": "https://impresso-project.ch/media/audio/RTS/bigbang/1996/06/27/a/canvas",
       "type": "Canvas",
-      "duration": 3315,
+      "duration": 470.95,
       "metadata": [
         {
           "label": {
-            "en": ["issue_id"]
-          },
-          "value": {
-            "en": ["RDN-1950-01-12-a"]
-          }
-        },
-        {
-          "label": {
-            "en": ["audio_id"]
-          },
-          "value": {
-            "en": ["RDN-1950-01-12-a-r0001"]
-          }
-        },
-        {
-          "label": {
-            "en": ["ci_id"]
-          },
-          "value": {
-            "en": ["RDN-1950-01-12-a-i0001"]
-          }
-        },
-        {
-          "label": {
-            "en": ["explore_bitmap"]
+            "en": [
+              "audio_id"
+            ]
           },
           "value": {
             "en": [
-              "0001000000000000100000000000000000000000000000000000000000000000"
+              "bigbang-1996-06-27-a-r0001"
             ]
           }
         },
         {
           "label": {
-            "en": ["get_tr_bitmap"]
-          },
-          "value": {
             "en": [
-              "0000000000000000100000000000000000000000000000000000000000000000"
+              "ci_id"
             ]
-          }
-        },
-        {
-          "label": {
-            "en": ["get_img_bitmaps"]
           },
           "value": {
             "en": [
-              "0000000000000000100000000000000000000000000000000000000000000000"
+              "bigbang-1996-06-27-a-i0001"
             ]
           }
         }
       ],
       "items": [
         {
-          "id": "https://impresso-project.ch/media/audio/INA/RDN/1950/01/12/a/canvas/page",
+          "id": "https://impresso-project.ch/media/audio/RTS/bigbang/1996/06/27/a/canvas/page",
           "type": "AnnotationPage",
           "items": [
             {
-              "id": "https://impresso-project.ch/media/audio/INA/RDN/1950/01/12/a/canvas/page/annotation",
+              "id": "https://impresso-project.ch/media/audio/RTS/bigbang/1996/06/27/a/canvas/page/annotation",
               "type": "Annotation",
               "motivation": "painting",
               "body": {
-                "id": "https://impresso-project.ch/media/audio/INA/RDN/1950/01/12/a/RDN-1950-01-12-a-r0001.mp3",
+                "id": "https://impresso-project.ch/media/audio/RTS/bigbang/1996/06/27/a/bigbang-1996-06-27-a-r0001.mp3",
                 "type": "Sound",
                 "format": "audio/mp3",
-                "duration": 3315
+                "duration": 470.95
               },
-              "target": "https://impresso-project.ch/media/audio/INA/RDN/1950/01/12/a/canvas"
+              "target": "https://impresso-project.ch/media/audio/RTS/bigbang/1996/06/27/a/canvas"
             }
           ]
         }

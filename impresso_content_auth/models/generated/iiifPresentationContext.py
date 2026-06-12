@@ -76,3 +76,4 @@ class IiifPresentationApiV3ManifestSchema:
     items: List[Canvas]
     field_context: str = "http://iiif.io/api/presentation/3/context.json"
     type: str = "Manifest"
+    metadata: Optional[List[MetadataItem]] = None
