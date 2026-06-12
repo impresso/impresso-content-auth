@@ -75,6 +75,14 @@ if window_age >= window_seconds then
     return init_quota_window(current_time)
 end
 
+-- Guard: bloom filter eviction (memory pressure, TTL skew) while window is still active.
+-- BF.EXISTS on a missing key returns 0 ("new") for every doc, causing runaway count inflation.
+-- Treat a missing bloom key the same as a window expiry — reset cleanly.
+local bloom_exists = redis.call('EXISTS', bloom_key)
+if bloom_exists == 0 then
+    return init_quota_window(current_time)
+end
+
 -- Within active window - check if document was previously accessed
 local exists = redis.call('BF.EXISTS', bloom_key, doc_id)  -- 1 = probably seen, 0 = definitely new
 local count = tonumber(redis.call('GET', count_key) or 0)  -- Current unique document count
@@ -107,10 +115,14 @@ redis.call('BF.ADD', bloom_key, doc_id)
 -- Increment the unique document counter
 local new_count = redis.call('INCR', count_key)
 
--- Ensure counter has TTL set (defensive: should already have TTL from initialization)
-local ttl = redis.call('TTL', count_key)
-if ttl == -1 then  -- -1 means no expiration set
+-- Ensure both keys have a TTL (defensive: should already be set from initialization)
+local count_ttl = redis.call('TTL', count_key)
+if count_ttl == -1 then  -- -1 means no expiration set
     redis.call('EXPIRE', count_key, math.ceil(remaining_window))
+end
+local bloom_ttl = redis.call('TTL', bloom_key)
+if bloom_ttl == -1 then
+    redis.call('EXPIRE', bloom_key, math.ceil(remaining_window))
 end
 
 return {1, new_count, 1, first_access_timestamp, remaining_window}  
